@@ -6,6 +6,33 @@ import pytest
 
 
 @pytest.mark.parametrize(
+    "test, expected, expect_raises",
+    [
+        ([[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]], None),
+        ([[1, 1, 1], [1, 1, 1], [1, 1, 1]], [[1, 1, 1], [1, 1, 1], [1, 1, 1]], None),
+        ([[float("nan"), 1, 1], [1, 1, 1], [1, 1, 1]], [[0, 0, 0], [1, 1, 1], [1, 1, 1]], None),
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[0.33, 0.67, 1], [0.67, 0.83, 1], [0.78, 0.89, 1]], None),
+        ([[-1, 2, 3], [4, 5, 6], [7, 8, 9]], None, ValueError),
+        ([[1, 2, 3], [4, 5, float("nan")], [7, 8, 9]], [[0.33, 0.67, 1], [0, 0, 0], [0.78, 0.89, 1]], None),
+        ("Hello", None, TypeError),
+        (3, None, TypeError),
+        ([1, 2, 3], None, ValueError),
+    ]
+)
+def test_patient_normalise(test, expected, expect_raises):
+    """Test normalisation work for arrays of one and positive integers.
+       Assumption that test accuracy of two decimal places is sufficient"""
+    from inflammation.models import patient_normalise
+    if isinstance(test, list):
+        test = np.array(test)
+    if expect_raises is None:
+        npt.assert_almost_equal(patient_normalise(test), np.array(expected), decimal=2)
+    else:
+        with pytest.raises(expect_raises):
+            npt.assert_almost_equal(patient_normalise(test), np.array(expected), decimal=2)
+
+
+@pytest.mark.parametrize(
     "test, expected",
     [
         ([[0, 0], [0, 0], [0, 0]], [0, 0]),
