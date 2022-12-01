@@ -2,6 +2,23 @@
 
 import numpy as np
 import numpy.testing as npt
+import pytest
+
+
+def test_daily_min_string():
+    """Test for TypeError when passing strings"""
+    from inflammation.models import daily_min
+
+    with pytest.raises(TypeError):
+        error_expected = daily_min([["Hello", "There"], ["General", "Kenobi"]])
+
+
+def test_daily_max_string():
+    """Test for TypeError when passing strings"""
+    from inflammation.models import daily_max
+
+    with pytest.raises(TypeError):
+        error_expected = daily_max([["Hello", "There"], ["General", "Kenobi"]])
 
 
 def test_daily_mean_zeros():
